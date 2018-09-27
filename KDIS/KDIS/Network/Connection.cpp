@@ -453,12 +453,16 @@ void Connection::SetBlockingModeEnabled( KBOOL E )
         unsigned long int uliIoctBlock = !m_bBlockingSocket;           // 1 enable, 0 disable.
         iResult = ioctlsocket( m_iSocket[i], FIONBIO, &uliIoctBlock ); // FIONBIO =  blocking mode
 
-#else
+#elif defined(__linux__)
 
         // Linux non blocking //
         KINT32 uliIoctBlock = !m_bBlockingSocket; // 1 enable, 0 disable.
         iResult = fcntl( m_iSocket[i], F_SETFL, O_NONBLOCK | FASYNC, &uliIoctBlock );
+#else
 
+        // other *NIX non blocking //
+        KINT32 uliIoctBlock = !m_bBlockingSocket; // 1 enable, 0 disable.
+        iResult = fcntl( m_iSocket[i], F_SETFL, O_NONBLOCK, &uliIoctBlock );
 #endif
 
         if( iResult == SOCKET_ERROR )

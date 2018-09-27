@@ -33,14 +33,15 @@ using namespace KDIS;
 using namespace DATA_TYPE;
 using namespace ENUMS;
 using namespace std;
+using namespace bits;
 
 //////////////////////////////////////////////////////////////////////////
 // Public:
 //////////////////////////////////////////////////////////////////////////
 
-LinearObjectAppearance::LinearObjectAppearance()
+LinearObjectAppearance::LinearObjectAppearance() :
+        m_linear_appearance_bits (0)
 {
-    m_SpecificAppearanceUnion.m_ui32SpecificAppearance = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -60,28 +61,29 @@ LinearObjectAppearance::~LinearObjectAppearance()
 
 void LinearObjectAppearance::SetBreach( Breach2bit B )
 {
-    m_SpecificAppearanceUnion.m_TankDitchConcertinaWire.m_ui32Breach = B;
+    setBits<2, 0>(m_linear_appearance_bits, B);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 Breach2bit LinearObjectAppearance::GetBreach() const
 {
-    return ( Breach2bit )m_SpecificAppearanceUnion.m_TankDitchConcertinaWire.m_ui32Breach;
+    return static_cast<Breach2bit>(
+            getUbits<2, 0>(m_linear_appearance_bits));
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
 void LinearObjectAppearance::SetBreachLength( KUINT8 L )
 {
-    m_SpecificAppearanceUnion.m_TankDitchConcertinaWire.m_ui32BreachLength = L;
+    setBits<8, 16>(m_linear_appearance_bits, L);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
 KUINT8 LinearObjectAppearance::GetBreachLength() const
 {
-    return m_SpecificAppearanceUnion.m_TankDitchConcertinaWire.m_ui32BreachLength;
+    return getUbits<8, 16>(m_linear_appearance_bits);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -89,86 +91,86 @@ KUINT8 LinearObjectAppearance::GetBreachLength() const
 void LinearObjectAppearance::SetBreachLocation( const bitset<8> & L )
 {
     KUINT32 i = L.to_ulong();
-    m_SpecificAppearanceUnion.m_TankDitchConcertinaWire.m_ui32BreachLength = ( KUINT8 )i;
+    setBits<8, 24>(m_linear_appearance_bits, i);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
 void LinearObjectAppearance::SetBreachLocation( KUINT8 L )
 {
-    m_SpecificAppearanceUnion.m_TankDitchConcertinaWire.m_ui32BreachLoc = L;
+    setBits<8, 24>(m_linear_appearance_bits, L);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
 KUINT8 LinearObjectAppearance::GetBreachLocation() const
 {
-    return m_SpecificAppearanceUnion.m_TankDitchConcertinaWire.m_ui32BreachLoc;
+    return (KUINT8) getUbits<8, 24>(m_linear_appearance_bits);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
 bitset<8> LinearObjectAppearance::GetBreachLocationAsBitset()
 {
-    return bitset<8>( ( KINT32 )m_SpecificAppearanceUnion.m_TankDitchConcertinaWire.m_ui32BreachLoc ); // We need to cast to a signed int, this is a visual studio 2010 fix
+    return bitset<8>( ( KINT32 )getUbits<8, 24>(m_linear_appearance_bits) ); // We need to cast to a signed int, this is a visual studio 2010 fix
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
-void LinearObjectAppearance::SetOpacity( KUINT8 O ) throw( KException )
+void LinearObjectAppearance::SetOpacity( KUINT8 Opacity ) throw( KException )
 {
-    if( O > 100 ) throw KException( __FUNCTION__, INVALID_DATA, "Acceptable values are 0-100." );
+    if( Opacity > 100 ) throw KException( __FUNCTION__, INVALID_DATA, "Acceptable values are 0-100." );
 
-    m_SpecificAppearanceUnion.m_ExhaustSmoke.m_ui32Opacity = O;
+   setBits<8, 0>(m_linear_appearance_bits, Opacity);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT8 LinearObjectAppearance::GetOpacity() const
 {
-    return m_SpecificAppearanceUnion.m_ExhaustSmoke.m_ui32Opacity;
+    return (KUINT8) getUbits<8, 0>(m_linear_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void LinearObjectAppearance::SetAttached( KBOOL A )
 {
-    m_SpecificAppearanceUnion.m_ExhaustSmoke.m_ui32Attached = A;
+    setBit<8>(m_linear_appearance_bits, A);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL LinearObjectAppearance::IsAttached() const
 {
-    return ( KBOOL )m_SpecificAppearanceUnion.m_ExhaustSmoke.m_ui32Attached;
+    return getBit<8>(m_linear_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void LinearObjectAppearance::SetChemical( Chemical C )
 {
-    m_SpecificAppearanceUnion.m_ExhaustSmoke.m_ui32Chemical = C;
+    setBits<2, 9>(m_linear_appearance_bits, (KBOOL) C);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 Chemical LinearObjectAppearance::GetChemical() const
 {
-    return ( Chemical )m_SpecificAppearanceUnion.m_ExhaustSmoke.m_ui32Chemical;
+    return ( Chemical ) getUbits<2, 9>(m_linear_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void LinearObjectAppearance::SetVisibleSide( VisibleSide V )
 {
-    m_SpecificAppearanceUnion.m_MinefieldLaneMarker.m_ui32VisibleSide = V;
+    setBits<2, 0>(m_linear_appearance_bits, V);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 VisibleSide LinearObjectAppearance::GetVisibleSide() const
 {
-    return  ( VisibleSide )m_SpecificAppearanceUnion.m_MinefieldLaneMarker.m_ui32VisibleSide;
+    return  ( VisibleSide ) getUbits<2, 0>(m_linear_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -178,7 +180,7 @@ KString LinearObjectAppearance::GetAsString() const
     KStringStream ss;
 
     ss << ObjectAppearance::GetAsString()
-       << "\tSpecific Appearance: " << m_SpecificAppearanceUnion.m_ui32SpecificAppearance << "\n";
+       << "\tSpecific Appearance: " << m_linear_appearance_bits << "\n";
 
     return ss.str();
 }
@@ -190,8 +192,8 @@ void LinearObjectAppearance::Decode( KDataStream & stream ) throw( KException )
     if( stream.GetBufferSize() < LINEAR_OBJECT_APPEARANCE_SIZE )throw KException( __FUNCTION__, NOT_ENOUGH_DATA_IN_BUFFER );
 
     // Note: The order of the bytes is switched in the linear appearance to fix an alignment issue in the 1998 standard.
-    stream >> m_GeneralAppearanceUnion.m_ui16GeneralAppearance
-           >> m_SpecificAppearanceUnion.m_ui32SpecificAppearance;
+    ObjectAppearance::Decode(stream);
+    stream >> m_linear_appearance_bits;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -210,17 +212,16 @@ KDataStream LinearObjectAppearance::Encode() const
 void LinearObjectAppearance::Encode( KDataStream & stream ) const
 {
     // First add the specific bytes and then the general.
-    stream << m_GeneralAppearanceUnion.m_ui16GeneralAppearance
-           << m_SpecificAppearanceUnion.m_ui32SpecificAppearance;
+    ObjectAppearance::Encode(stream);
+    stream << m_linear_appearance_bits;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL LinearObjectAppearance::operator == ( const LinearObjectAppearance & Value ) const
 {
-    if( ObjectAppearance::operator  != ( Value ) ) return false;
-    if( m_SpecificAppearanceUnion.m_ui32SpecificAppearance != Value.m_SpecificAppearanceUnion.m_ui32SpecificAppearance ) return false;
-    return true;
+    return (m_linear_appearance_bits == Value.m_linear_appearance_bits)
+            && ObjectAppearance::operator==(Value);
 }
 
 //////////////////////////////////////////////////////////////////////////

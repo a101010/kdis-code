@@ -32,14 +32,14 @@ http://p.sf.net/kdis/UserGuide
 using namespace KDIS;
 using namespace DATA_TYPE;
 using namespace ENUMS;
+using namespace bits;
 
 //////////////////////////////////////////////////////////////////////////
 // Public:
 //////////////////////////////////////////////////////////////////////////
 
-PointObjectAppearance::PointObjectAppearance()
+PointObjectAppearance::PointObjectAppearance() : m_point_appearance_bits(0)
 {
-    m_SpecificAppearanceUnion.m_ui32SpecificAppearance = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,114 +59,114 @@ PointObjectAppearance::~PointObjectAppearance()
 
 void PointObjectAppearance::SetBreach( Breach2bit B )
 {
-    m_SpecificAppearanceUnion.m_LogCribAbatisVehicleDefiladeInf.m_ui32Breach = B;
+    setBits<2, 0>(m_point_appearance_bits, B);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 Breach2bit PointObjectAppearance::GetBreach() const
 {
-    return ( Breach2bit )m_SpecificAppearanceUnion.m_LogCribAbatisVehicleDefiladeInf.m_ui32Breach;
+    return ( Breach2bit ) getUbits<2, 0>(m_point_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-void PointObjectAppearance::SetOpacity( KUINT8 O ) throw( KException )
+void PointObjectAppearance::SetOpacity( KUINT8 Opacity ) throw( KException )
 {
-    if( O > 100 ) throw KException( __FUNCTION__, INVALID_DATA, "Acceptable values are 0-100." );
+    if( Opacity > 100 ) throw KException( __FUNCTION__, INVALID_DATA, "Acceptable values are 0-100." );
 
-    m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32Opacity = O;
+    setBits<8, 0>(m_point_appearance_bits, Opacity);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT8 PointObjectAppearance::GetOpacity() const
 {
-    return m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32Opacity;
+    return (KUINT8) getUbits<8, 0>(m_point_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void PointObjectAppearance::SetBurstSize( KUINT8 S )
 {
-    m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32Size = S;
+    setBits<8, 8>(m_point_appearance_bits, S);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT8 PointObjectAppearance::GetBurstSize() const
 {
-    return m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32Size;
+    return (KUINT8) getUbits<8, 8>(m_point_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void PointObjectAppearance::SetHeight( KUINT8 H )
 {
-    m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32Height = H;
+    setBits<8, 16>(m_point_appearance_bits, H);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT8 PointObjectAppearance::GetHeight() const
 {
-    return m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32Height;
+    return (KUINT8) getUbits<8, 16>(m_point_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void PointObjectAppearance::SetNumBursts( KUINT8 N )
 {
-	m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32NumBurst = N;
+    setBits<6, 24>(m_point_appearance_bits, N);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT8 PointObjectAppearance::GetNumBursts() const
 {
-    return m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32NumBurst;
+    return (KUINT8) getUbits<6, 24>(m_point_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void PointObjectAppearance::SetChemical( Chemical C )
 {
-    m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32Chemical = C;
+    setBits<2, 30>(m_point_appearance_bits, (KBOOL) C);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 Chemical PointObjectAppearance::GetChemical() const
 {
-    return ( Chemical )m_SpecificAppearanceUnion.m_AirBurstGroundBurst.m_ui32Chemical;
+    return ( Chemical ) getUbits<2, 30>(m_point_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void PointObjectAppearance::SetCraterSize( KUINT8 S )
 {
-    m_SpecificAppearanceUnion.m_Crater.m_ui32Size = S;
+    setBits<8, 0>(m_point_appearance_bits, S);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT8 PointObjectAppearance::GetCraterSize() const
 {
-    return m_SpecificAppearanceUnion.m_Crater.m_ui32Size;
+    return (KUINT8) getUbits<8, 0>(m_point_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void PointObjectAppearance::SetNumSegments( KUINT8 N )
 {
-    m_SpecificAppearanceUnion.m_RibbonBridge.m_ui32NumSeg = N;
+    setBits<8, 0>(m_point_appearance_bits, N);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT8 PointObjectAppearance::GetNumSegments() const
 {
-    return m_SpecificAppearanceUnion.m_RibbonBridge.m_ui32NumSeg;
+    return (KUINT8) getUbits<8, 0>(m_point_appearance_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ KString PointObjectAppearance::GetAsString() const
     KStringStream ss;
 
     ss << ObjectAppearance::GetAsString()
-       << "\tSpecific Appearance: " << m_SpecificAppearanceUnion.m_ui32SpecificAppearance << "\n";
+       << "\tSpecific Appearance: " << m_point_appearance_bits << "\n";
 
     return ss.str();
 }
@@ -187,8 +187,8 @@ void PointObjectAppearance::Decode( KDataStream & stream ) throw( KException )
 {
     if( stream.GetBufferSize() < POINT_OBJECT_APPEARANCE_SIZE )throw KException( __FUNCTION__, NOT_ENOUGH_DATA_IN_BUFFER );
 
-    stream >> m_SpecificAppearanceUnion.m_ui32SpecificAppearance
-           >> m_GeneralAppearanceUnion.m_ui16GeneralAppearance;
+    stream >> m_point_appearance_bits;
+    ObjectAppearance::Decode(stream);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -207,17 +207,16 @@ KDataStream PointObjectAppearance::Encode() const
 void PointObjectAppearance::Encode( KDataStream & stream ) const
 {
     // First add the specific bytes and then the general.
-    stream << m_SpecificAppearanceUnion.m_ui32SpecificAppearance
-           << m_GeneralAppearanceUnion.m_ui16GeneralAppearance;
+    stream << m_point_appearance_bits;
+    ObjectAppearance::Encode(stream);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL PointObjectAppearance::operator == ( const PointObjectAppearance & Value ) const
 {
-    if( ObjectAppearance::operator  != ( Value ) ) return false;
-    if( m_SpecificAppearanceUnion.m_ui32SpecificAppearance != Value.m_SpecificAppearanceUnion.m_ui32SpecificAppearance ) return false;
-    return true;
+    return (m_point_appearance_bits == Value.m_point_appearance_bits)
+            && (ObjectAppearance::operator==(Value));
 }
 
 //////////////////////////////////////////////////////////////////////////

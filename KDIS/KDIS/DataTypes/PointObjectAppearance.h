@@ -43,43 +43,19 @@ http://p.sf.net/kdis/UserGuide
 namespace KDIS {
 namespace DATA_TYPE {
 
+// TODO Is there a case to be made for breaking this into
+//      four separate objects?
+//      Opacity, Size, Height, NumSeg could all be non-bit field.
+//      And GetAsString could be more informative.
+//      E.g.:
+//          LogCrib_Abatis_VehicleDefilade_InfAppearance
+//          AirBurst_GroundBurstAppearance
+//          CraterAppearance
+//          RibbonBridgeAppearance
 class KDIS_EXPORT PointObjectAppearance : public ObjectAppearance
 {
 protected:
-
-    union
-    {
-        struct
-        {
-            KUINT32 m_ui32Breach : 2;
-            KUINT32 m_ui32Unused : 30;
-        } m_LogCribAbatisVehicleDefiladeInf;
-
-        struct
-        {
-            KUINT32 m_ui32Opacity  : 8;
-            KUINT32 m_ui32Size     : 8;
-            KUINT32 m_ui32Height   : 8;
-            KUINT32 m_ui32NumBurst : 6;
-            KUINT32 m_ui32Chemical : 2;
-
-        } m_AirBurstGroundBurst;
-
-        struct
-        {
-            KUINT32 m_ui32Size   : 8;
-            KUINT32 m_ui32Unused : 24;
-
-        } m_Crater;
-
-        struct
-        {
-            KUINT32 m_ui32NumSeg : 8;
-            KUINT32 m_ui32Unused : 24;
-        } m_RibbonBridge;
-
-        KUINT32 m_ui32SpecificAppearance;
-    } m_SpecificAppearanceUnion;
+    KUINT32 m_point_appearance_bits;
 
 public:
 

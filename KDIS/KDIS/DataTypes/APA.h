@@ -39,6 +39,7 @@ http://p.sf.net/kdis/UserGuide
 #pragma once
 
 #include "./DataTypeBase.h"
+#include "./external/bits/bits.hpp"
 
 namespace KDIS {
 namespace DATA_TYPE {
@@ -47,16 +48,7 @@ class KDIS_EXPORT APA : public DataTypeBase
 {
 protected:
 
-    union
-    {
-        struct
-        {
-            KUINT16 m_ui16APPI    : 14;
-            KUINT16 m_ui16Status2 : 1;
-            KUINT16 m_ui16Status1 : 1;
-        };
-        KUINT16 m_ui16ParamIndex;
-    }m_ApaUnion;
+    KUINT16 m_ui16ParamIndex;
 
     KINT16 m_i16Value;
 
@@ -70,7 +62,7 @@ public:
 
     APA( KDIS::DATA_TYPE::ENUMS::AdditionalPassiveParameterIndex APPI, KBOOL Val1, KBOOL Val2, KINT16 Value );
 
-    virtual ~APA();
+    virtual ~APA() = default;
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::APA::SetAPPI
@@ -83,8 +75,13 @@ public:
     //              ( SEDB )and an Additional Narrow band Database ( ANDB ).
     // Parameter:   AdditionalPassiveParameterIndex RPM, void
     //************************************
-    void SetAPPI( KDIS::DATA_TYPE::ENUMS::AdditionalPassiveParameterIndex APPI );
-    KDIS::DATA_TYPE::ENUMS::AdditionalPassiveParameterIndex GetAPPI() const;
+    void SetAPPI( KDIS::DATA_TYPE::ENUMS::AdditionalPassiveParameterIndex APPI ) {
+    	bits::setBits<14, 0>(m_ui16ParamIndex, APPI);
+    }
+    KDIS::DATA_TYPE::ENUMS::AdditionalPassiveParameterIndex GetAPPI() const {
+    	return static_cast<KDIS::DATA_TYPE::ENUMS::AdditionalPassiveParameterIndex>(
+    	        bits::getUbits<14, 0>(m_ui16ParamIndex));
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::APA::SetStatus
@@ -102,9 +99,16 @@ public:
     // Parameter:   KBOOL Val1, void
     // Parameter:   KBOOL Val2
     //************************************
-    void SetStatus( KBOOL Val1, KBOOL Val2 );
-    KBOOL GetStatusVal1() const;
-    KBOOL GetStatusVal2() const;
+    void SetStatus( KBOOL Val1, KBOOL Val2 ) {
+    	bits::setBit<14>(m_ui16ParamIndex, Val1);
+    	bits::setBit<15>(m_ui16ParamIndex, Val2);
+    }
+    KBOOL GetStatusVal1() const {
+    	bits::getBit<14>(m_ui16ParamIndex);
+    }
+    KBOOL GetStatusVal2() const {
+    	bits::getBit<15>(m_ui16ParamIndex);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::APA::SetValue
@@ -113,8 +117,12 @@ public:
     //              defined in the APA param index field.
     // Parameter:   KINT16 V, void
     //************************************
-    void SetValue( KINT16 V );
-    KINT16 GetValue() const;
+    void SetValue( KINT16 V ) {
+    	m_i16Value = V;
+    }
+    KINT16 GetValue() const {
+    	return m_i16Value;
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::APA::GetAsString

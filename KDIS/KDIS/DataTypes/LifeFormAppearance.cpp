@@ -37,241 +37,10 @@ using namespace ENUMS;
 // Public:
 //////////////////////////////////////////////////////////////////////////
 
-void LifeFormAppearance::SetEntityPaintScheme( EntityPaintScheme EPS )
-{
-    m_PaintScheme = EPS;
-}
+LifeFormAppearance::LifeFormAppearance() :
+    m_bits(0)
+{}
 
-//////////////////////////////////////////////////////////////////////////
-
-EntityPaintScheme LifeFormAppearance::GetEntityPaintScheme() const
-{
-    return ( EntityPaintScheme )m_PaintScheme;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityDamage( EntityDamage ED )
-{
-    m_Damage = ED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-EntityDamage LifeFormAppearance::GetEntityDamage() const
-{
-    return ( EntityDamage )m_Damage;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityEntityCompliance( EntityCompliance EC )
-{
-    m_Compliance = EC;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-EntityCompliance LifeFormAppearance::GetEntityEntityCompliance() const
-{
-    return ( EntityCompliance ) m_Compliance;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntitySignalSmokeInUse( KBOOL SS )
-{
-    m_SignalSmokeInUse = SS;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsEntitySignalSmokeInUse() const
-{
-    return m_SignalSmokeInUse;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityFlashLights( KBOOL FL )
-{
-    m_Flashlight = FL;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsEntityFlashLightsOn() const
-{
-    return m_Flashlight;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntitySignalMirrorInUse( KBOOL SM )
-{
-    m_SignalMirrorInUse = SM;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsEntitySignalMirrorInUse() const
-{
-    return m_SignalMirrorInUse;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityIRStrobe( KBOOL IRS )
-{
-    m_IRStrobe = IRS;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsEntityIRStrobeOn() const
-{
-    return m_IRStrobe;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityIRIlluminator( KBOOL IRI )
-{
-    m_IRIlluminator = IRI;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsEntityIRIlluminatorOn() const
-{
-    return m_IRIlluminator;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityLifeformState( KDIS::DATA_TYPE::ENUMS::EntityLifeformAppearance EA )
-{
-    m_LifeformState = EA;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-EntityLifeformAppearance LifeFormAppearance::GetEntityLifeformState() const
-{
-    return ( EntityLifeformAppearance )m_LifeformState;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityFrozenStatus( KBOOL EFS )
-{
-    m_FrozenStatus = EFS;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsEntityFrozen() const
-{
-    return m_FrozenStatus;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityMountedHoisted( KBOOL MH )
-{
-    m_MountedHoisted = MH;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsEntityMountedHoisted() const
-{
-    return m_MountedHoisted;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityStateActive( KBOOL ES )
-{
-    m_State = !ES;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsEntityStateActive() const
-{
-    return !m_State;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityLifeformWeapon1( EntityLifeformWeapon ELW )
-{
-    m_Weapon1 = ELW;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-EntityLifeformWeapon LifeFormAppearance::GetEntityLifeformWeapon1() const
-{
-    return ( EntityLifeformWeapon )m_Weapon1;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityLifeformWeapon2( EntityLifeformWeapon ELW )
-{
-    m_Weapon2 = ELW;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-EntityLifeformWeapon LifeFormAppearance::GetEntityLifeformWeapon2() const
-{
-    return ( EntityLifeformWeapon )m_Weapon2;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetEntityCamouflage( EntityCamouflage EC )
-{
-    m_Camouflage = EC;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-EntityCamouflage LifeFormAppearance::GetEntityCamouflage() const
-{
-    return ( EntityCamouflage )m_Camouflage;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetConcealedStationary( KBOOL CS )
-{
-    m_ConcealedStationary = CS;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsConcealedStationary() const
-{
-    return m_ConcealedStationary;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void LifeFormAppearance::SetConcealedMovement( KBOOL CM )
-{
-    m_ConcealedMovement = CM;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL LifeFormAppearance::IsConcealedMovement() const
-{
-    return m_ConcealedMovement;
-}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -280,23 +49,23 @@ KString LifeFormAppearance::GetAsString() const
     KStringStream ss;
 
     ss << "Lifeform Appearance:"
-       << "\n\tPaint Scheme:         " << GetEnumAsStringEntityPaintScheme( m_PaintScheme )
-       << "\n\tDamage:               " << GetEnumAsStringEntityDamage( m_Damage )
-       << "\n\tCompliance:           " << GetEnumAsStringEntityCompliance( m_Compliance )
-       << "\n\tSignal Smoke In Use:  " << m_SignalSmokeInUse
-       << "\n\tFlash Lights:         " << m_Flashlight
-       << "\n\tSignal Mirror In Use: " << m_SignalMirrorInUse
-       << "\n\tIR Strobe On:         " << m_IRStrobe
-       << "\n\tIR Illuminator On:    " << m_IRIlluminator
-       << "\n\tLifeform State:       " << GetEnumAsStringEntityLifeformAppearance( m_LifeformState )
-       << "\n\tFrozen Status:        " << m_FrozenStatus
-       << "\n\tMounted/Hoisted:      " << m_MountedHoisted
-       << "\n\tState:                " << m_State
-       << "\n\tWeapon 1:             " << GetEnumAsStringEntityLifeformWeapon( m_Weapon1 )
-       << "\n\tWeapon 2:             " << GetEnumAsStringEntityLifeformWeapon( m_Weapon2 )
-       << "\n\tCamouflage:           " << GetEnumAsStringEntityCamouflage( m_Camouflage )
-       << "\n\tConcealed Stationary: " << m_ConcealedStationary
-       << "\n\tConcealed Movement:   " << m_ConcealedMovement
+       << "\n\tPaint Scheme:         " << GetEnumAsStringEntityPaintScheme( GetEntityPaintScheme() )
+       << "\n\tDamage:               " << GetEnumAsStringEntityDamage( GetEntityDamage() )
+       << "\n\tCompliance:           " << GetEnumAsStringEntityCompliance( GetEntityEntityCompliance() )
+       << "\n\tSignal Smoke In Use:  " << IsEntitySignalSmokeInUse()
+       << "\n\tFlash Lights:         " << IsEntityFlashLightsOn()
+       << "\n\tSignal Mirror In Use: " << IsEntitySignalMirrorInUse()
+       << "\n\tIR Strobe On:         " << IsEntityIRStrobeOn()
+       << "\n\tIR Illuminator On:    " << IsEntityIRIlluminatorOn()
+       << "\n\tLifeform State:       " << GetEnumAsStringEntityLifeformAppearance( GetEntityLifeformState() )
+       << "\n\tFrozen Status:        " << IsEntityFrozen()
+       << "\n\tMounted/Hoisted:      " << IsEntityMountedHoisted()
+       << "\n\tState:                " << IsEntityStateActive()
+       << "\n\tWeapon 1:             " << GetEnumAsStringEntityLifeformWeapon( GetEntityLifeformWeapon1() )
+       << "\n\tWeapon 2:             " << GetEnumAsStringEntityLifeformWeapon(GetEntityLifeformWeapon2())
+       << "\n\tCamouflage:           " << GetEnumAsStringEntityCamouflage( GetEntityCamouflage() )
+       << "\n\tConcealed Stationary: " << IsConcealedStationary()
+       << "\n\tConcealed Movement:   " << IsConcealedMovement()
        << "\n";
 
     return ss.str();

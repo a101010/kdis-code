@@ -29,6 +29,7 @@ http://p.sf.net/kdis/UserGuide
 
 #include "./ObjectAppearance.h"
 
+using namespace bits;
 using namespace KDIS;
 using namespace DATA_TYPE;
 using namespace ENUMS;
@@ -37,9 +38,10 @@ using namespace ENUMS;
 // Public:
 //////////////////////////////////////////////////////////////////////////
 
-ObjectAppearance::ObjectAppearance()
+ObjectAppearance::ObjectAppearance() :
+        m_percentComplete(0),
+        m_bits(0)
 {
-    m_GeneralAppearanceUnion.m_ui16GeneralAppearance = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,12 +58,12 @@ ObjectAppearance::ObjectAppearance( KUINT8 PerCent, ObjectDamage OD, KBOOL Predi
 {
     if( PerCent > 100 ) throw KException( __FUNCTION__, INVALID_DATA, "PerCent Acceptable values are 0-100." );
 
-    m_GeneralAppearanceUnion.m_ui16PcComp = PerCent;
-    m_GeneralAppearanceUnion.m_ui16Dmg = OD;
-    m_GeneralAppearanceUnion.m_ui16Predistributed = Predist;
-    m_GeneralAppearanceUnion.m_ui16State = State;
-    m_GeneralAppearanceUnion.m_ui16Smoking = Smoking;
-    m_GeneralAppearanceUnion.m_ui16Flaming = Flaming;
+    m_percentComplete = PerCent;
+    SetDamage(OD);
+    SetPredistributed(Predist);
+    SetState(State);
+    SetSmoking(Smoking);
+    SetFlaming(Flaming);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -74,14 +76,18 @@ ObjectAppearance::~ObjectAppearance()
 
 void ObjectAppearance::SetGeneralAppearance( KUINT16 GA )
 {
-    m_GeneralAppearanceUnion.m_ui16GeneralAppearance = GA;
+    m_percentComplete = getUbits<8, 0>(GA);
+    m_bits = getUbits<8, 8>(GA);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT16 ObjectAppearance::GetGeneralAppearance() const
 {
-    return m_GeneralAppearanceUnion.m_ui16GeneralAppearance;
+    KUINT16 generalAppearance;
+    setBits<8, 0>(generalAppearance, m_percentComplete);
+    setBits<8, 8>(generalAppearance, m_bits);
+    return generalAppearance;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -90,84 +96,84 @@ void ObjectAppearance::SetPercentageComplete( KUINT8 P ) throw( KException )
 {
     if( P > 100 ) throw KException( __FUNCTION__, INVALID_DATA, "Acceptable values are 0-100." );
 
-    m_GeneralAppearanceUnion.m_ui16PcComp = P;
+    m_percentComplete = P;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KUINT8 ObjectAppearance::GetPercentageComplete() const
 {
-    return m_GeneralAppearanceUnion.m_ui16PcComp;
+    return m_percentComplete;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void ObjectAppearance::SetDamage( ObjectDamage OD )
 {
-    m_GeneralAppearanceUnion.m_ui16Dmg = OD;
+    setBits<2, 0>(m_bits, OD);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 ObjectDamage ObjectAppearance::GetDamage() const
 {
-    return ( ObjectDamage )m_GeneralAppearanceUnion.m_ui16Dmg;
+    return ( ObjectDamage ) getUbits<2, 0>(m_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void ObjectAppearance::SetPredistributed( KBOOL P )
 {
-    m_GeneralAppearanceUnion.m_ui16Predistributed = P;
+    setBit<2>(m_bits, P);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL ObjectAppearance::IsPredistributed() const
 {
-    return m_GeneralAppearanceUnion.m_ui16Predistributed;
+    return getBit<2>(m_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void ObjectAppearance::SetState( KBOOL S )
 {
-    m_GeneralAppearanceUnion.m_ui16State = S;
+    setBit<3>(m_bits, S);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL ObjectAppearance::GetState() const
 {
-    return m_GeneralAppearanceUnion.m_ui16State;
+    return getBit<3>(m_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void ObjectAppearance::SetSmoking( KBOOL S )
 {
-    m_GeneralAppearanceUnion.m_ui16Smoking = S;
+    setBit<4>(m_bits, S);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL ObjectAppearance::IsSmoking() const
 {
-    return m_GeneralAppearanceUnion.m_ui16Smoking;
+    return getBit<4>(m_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 void ObjectAppearance::SetFlaming( KBOOL F )
 {
-    m_GeneralAppearanceUnion.m_ui16Flaming = F;
+    setBit<5>(m_bits, F);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL ObjectAppearance::IsFlaming() const
 {
-    return m_GeneralAppearanceUnion.m_ui16Flaming;
+    return getBit<5>(m_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -178,12 +184,12 @@ KString ObjectAppearance::GetAsString() const
 
     ss << "Object Appearance:\n"
        << "\tGeneral Appearance:"
-       << "\tPercent Complete:  " << m_GeneralAppearanceUnion.m_ui16PcComp         << "\n"
-       << "\tDamage:            " << GetEnumAsStringObjectDamage( m_GeneralAppearanceUnion.m_ui16Dmg ) << "\n"
-       << "\tPredistributed:    " << m_GeneralAppearanceUnion.m_ui16Predistributed << "\n"
-       << "\tState:             " << m_GeneralAppearanceUnion.m_ui16State          << "\n"
-       << "\tSmoking:           " << m_GeneralAppearanceUnion.m_ui16Smoking        << "\n"
-       << "\tFlaming:           " << m_GeneralAppearanceUnion.m_ui16Flaming        << "\n";
+       << "\tPercent Complete:  " << m_percentComplete                          << "\n"
+       << "\tDamage:            " << GetEnumAsStringObjectDamage( GetDamage() ) << "\n"
+       << "\tPredistributed:    " << IsPredistributed()                         << "\n"
+       << "\tState:             " << GetState()                                 << "\n"
+       << "\tSmoking:           " << IsSmoking()                                << "\n"
+       << "\tFlaming:           " << IsFlaming()                                << "\n";
 
     return ss.str();
 }
@@ -194,9 +200,8 @@ void ObjectAppearance::Decode( KDataStream & stream ) throw( KException )
 {
     if( stream.GetBufferSize() < OBJECT_APPEARANCE_SIZE )throw KException( __FUNCTION__, NOT_ENOUGH_DATA_IN_BUFFER );
 
-    // Do not swap endian.
-    stream >> m_GeneralAppearanceUnion.m_ui8GeneralAppearance[1]
-           >> m_GeneralAppearanceUnion.m_ui8GeneralAppearance[0];
+    stream >> m_bits
+           >> m_percentComplete;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -214,17 +219,16 @@ KDataStream ObjectAppearance::Encode() const
 
 void ObjectAppearance::Encode( KDataStream & stream ) const
 {
-    // Do not swap endian.
-    stream << m_GeneralAppearanceUnion.m_ui8GeneralAppearance[1]
-           << m_GeneralAppearanceUnion.m_ui8GeneralAppearance[0];
+    stream << m_bits
+           << m_percentComplete;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL ObjectAppearance::operator == ( const ObjectAppearance & Value ) const
 {
-    if( m_GeneralAppearanceUnion.m_ui16GeneralAppearance != Value.m_GeneralAppearanceUnion.m_ui16GeneralAppearance ) return false;
-    return true;
+    return (this->m_bits == Value.m_bits
+            && this->m_percentComplete == Value.m_percentComplete);
 }
 
 //////////////////////////////////////////////////////////////////////////

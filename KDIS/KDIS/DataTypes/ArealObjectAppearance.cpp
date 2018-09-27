@@ -33,14 +33,16 @@ using namespace KDIS;
 using namespace DATA_TYPE;
 using namespace ENUMS;
 using namespace std;
+using namespace bits;
 
 //////////////////////////////////////////////////////////////////////////
 // Public:
 //////////////////////////////////////////////////////////////////////////
 
-ArealObjectAppearance::ArealObjectAppearance()
+ArealObjectAppearance::ArealObjectAppearance() :
+        m_bits(0),
+        m_mines(0)
 {
-    m_SpecificAppearanceUnion.m_ui32SpecificAppearance = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -60,28 +62,28 @@ ArealObjectAppearance::~ArealObjectAppearance()
 
 void ArealObjectAppearance::SetBreach( Breach2bit B )
 {
-    m_SpecificAppearanceUnion.m_Minefield.m_ui32Breach = B;
+    setBits<2, 0>(m_bits, B);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 Breach2bit ArealObjectAppearance::GetBreach() const
 {
-    return ( Breach2bit )m_SpecificAppearanceUnion.m_Minefield.m_ui32Breach;
+    return ( Breach2bit ) getUbits<2, 0>(m_bits);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 void ArealObjectAppearance::SetMineCount( KUINT16 M )
 {
-    m_SpecificAppearanceUnion.m_Minefield.m_ui32Mines = M;
+    m_mines = M;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 KUINT16 ArealObjectAppearance::GetMineCount() const
 {
-    return m_SpecificAppearanceUnion.m_Minefield.m_ui32Mines;
+    return m_mines;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,7 +93,8 @@ KString ArealObjectAppearance::GetAsString() const
     KStringStream ss;
 
     ss << ObjectAppearance::GetAsString()
-       << "\tSpecific Appearance: " << m_SpecificAppearanceUnion.m_ui32SpecificAppearance << "\n";
+       << "\tBreach: " << GetEnumAsStringBreach2bit( GetBreach() ) << "\n"
+       << "\tMine Count: " << m_mines << "\n";
 
     return ss.str();
 }
@@ -102,8 +105,8 @@ void ArealObjectAppearance::Decode( KDataStream & stream ) throw( KException )
 {
     if( stream.GetBufferSize() < ArealObjectAppearance::AREAL_OBJECT_APPEARANCE_SIZE )throw KException( __FUNCTION__, NOT_ENOUGH_DATA_IN_BUFFER );
 
-    stream >> m_SpecificAppearanceUnion.m_ui32SpecificAppearance
-           >> m_GeneralAppearanceUnion.m_ui16GeneralAppearance;
+    stream >> m_mines >> m_bits;
+    ObjectAppearance::Decode(stream);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -121,18 +124,18 @@ KDataStream ArealObjectAppearance::Encode() const
 
 void ArealObjectAppearance::Encode( KDataStream & stream ) const
 {
+    // TODO need a unit test to make sure I did this right.
     // First add the specific bytes and then the general.
-    stream << m_SpecificAppearanceUnion.m_ui32SpecificAppearance
-           << m_GeneralAppearanceUnion.m_ui16GeneralAppearance;
+    stream << m_mines << m_bits;
+    ObjectAppearance::Encode(stream);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 KBOOL ArealObjectAppearance::operator == ( const ArealObjectAppearance & Value ) const
 {
-    if( ObjectAppearance::operator  != ( Value ) ) return false;
-    if( m_SpecificAppearanceUnion.m_ui32SpecificAppearance != Value.m_SpecificAppearanceUnion.m_ui32SpecificAppearance ) return false;
-    return true;
+    return ((m_bits == Value.m_bits) && (m_mines == Value.m_mines)
+            && ObjectAppearance::operator==(Value));
 }
 
 //////////////////////////////////////////////////////////////////////////

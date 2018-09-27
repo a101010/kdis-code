@@ -12,7 +12,9 @@ SET(DIS_VERSION 7 CACHE STRING "The version of DIS to use. IEEE 1278.1-1995(5), 
 OPTION(KDIS_USE_ENUM_DESCRIPTORS "Use enumeration descriptors. These allow enum values to be turned into their text labels. This increase the memory footprint of your application so do not enable if you do not plan to use." ON)
 OPTION(BUILD_EXAMPLES "Create example projects" ON)
 OPTION(USE_SOLUTION_FOLDERS "Organise all projects into folders in your solution. At the moment this feature seems to be Visual Studio Professional(Not Express) only." ON)
-OPTION(BUILD_TESTS "Build the KDIS unit tests. Uses the google test framework.")
+OPTION(BUILD_TESTS "Build the KDIS unit tests. Uses the google test framework." Off)
+SET(GTEST_URL https://github.com/google/googletest/archive/release-1.7.0.zip CACHE STRING "Override this if you prefer to use a local copy of google test.")
+OPTION(USE_CXX_11 "Build with C++11 or newer on compilers that require command-line flags to enable support for it." ON) 
 
 IF(NOT DIS_VERSION MATCHES 5 AND NOT DIS_VERSION GREATER 5 AND NOT DIS_VERSION GREATER 6)
 MESSAGE(FATAL_ERROR "Invalid DIS version, only 5, 6 and 7 are supported")
@@ -27,6 +29,21 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 ELSE(USE_SOLUTION_FOLDERS)
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS OFF)
 ENDIF(USE_SOLUTION_FOLDERS)
+
+if(USE_CXX_11)
+    if(CMAKE_CXX_COMPILER_ID MATCHES GNU)
+	    set(CMAKE_CXX_FLAGS -std=c++11)
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES Clang)
+	    set(CMAKE_CXX_FLAGS -std=c++11)
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
+	    set(CMAKE_CXX_FLAGS /std:c++14)
+    endif()
+endif()
+
+########################################################
+#                       Bits                           #
+########################################################
+SET(KDIS_SRC_BITS_H ${KDIS_SOURCE_DIR}/external/bits/bits.hpp)
 
 ########################################################
 #                       Base                           #
@@ -990,4 +1007,3 @@ INSTALL(FILES ${KDIS_SRC_PDU_SE_H}     DESTINATION  include/${BASE_DIRNAME}/${PD
 INSTALL(FILES ${KDIS_SRC_PDU_SM_H}     DESTINATION  include/${BASE_DIRNAME}/${PDU_SM_DIRNAME})
 INSTALL(FILES ${KDIS_SRC_PDU_SMWR_H}   DESTINATION  include/${BASE_DIRNAME}/${PDU_SMWR_DIRNAME})
 INSTALL(FILES ${KDIS_SRC_PDU_W_H}      DESTINATION  include/${BASE_DIRNAME}/${PDU_W_DIRNAME})
-

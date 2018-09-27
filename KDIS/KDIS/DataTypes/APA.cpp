@@ -38,10 +38,9 @@ using namespace ENUMS;
 //////////////////////////////////////////////////////////////////////////
 
 APA::APA() :
+    m_ui16ParamIndex( 0 ),
     m_i16Value( 0 )
-{
-	m_ApaUnion.m_ui16ParamIndex = 0;
-}
+{}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -53,68 +52,11 @@ APA::APA( KDataStream & stream ) throw( KException )
 //////////////////////////////////////////////////////////////////////////
 
 APA::APA( AdditionalPassiveParameterIndex APPI, KBOOL Val1, KBOOL Val2, KINT16 Value ) :
+    m_ui16ParamIndex( 0 ),
     m_i16Value( Value )
 {
-	m_ApaUnion.m_ui16ParamIndex = 0;
-	m_ApaUnion.m_ui16APPI = APPI;
-	m_ApaUnion.m_ui16Status1 = Val1;
-	m_ApaUnion.m_ui16Status2 = Val2;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-APA::~APA()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void APA::SetAPPI( AdditionalPassiveParameterIndex APPI )
-{
-    m_ApaUnion.m_ui16APPI = APPI;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-AdditionalPassiveParameterIndex APA::GetAPPI() const
-{
-    return ( AdditionalPassiveParameterIndex )m_ApaUnion.m_ui16APPI;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void APA::SetStatus( KBOOL Val1, KBOOL Val2 )
-{
-    m_ApaUnion.m_ui16Status1 = Val1;
-    m_ApaUnion.m_ui16Status2 = Val2;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL APA::GetStatusVal1() const
-{
-    return m_ApaUnion.m_ui16Status1;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KBOOL APA::GetStatusVal2() const
-{
-    return m_ApaUnion.m_ui16Status2;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void APA::SetValue( KINT16 V )
-{
-    m_i16Value = V;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-KINT16 APA::GetValue() const
-{
-    return m_i16Value;
+	SetAPPI(APPI);
+	SetStatus(Val1, Val2);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,8 +66,8 @@ KString APA::GetAsString() const
     KStringStream ss;
 
     ss << "APA:"
-       << "\n\tParam Index:  " << GetEnumAsStringAdditionalPassiveParameterIndex( m_ApaUnion.m_ui16APPI )
-       << "\n\tStatus:       ( " << m_ApaUnion.m_ui16Status1 << " , " << m_ApaUnion.m_ui16Status2 << " )"
+       << "\n\tParam Index:  " << GetEnumAsStringAdditionalPassiveParameterIndex( GetAPPI() )
+       << "\n\tStatus:       ( " << GetStatusVal1() << " , " << GetStatusVal2() << " )"
        << "\n\tValue:        " << m_i16Value
        << "\n";
 
@@ -138,7 +80,7 @@ void APA::Decode( KDataStream & stream ) throw( KException )
 {
     if( stream.GetBufferSize() < APA_SIZE )throw KException( __FUNCTION__, NOT_ENOUGH_DATA_IN_BUFFER );
 
-    stream >> m_ApaUnion.m_ui16ParamIndex
+    stream >> m_ui16ParamIndex
            >> m_i16Value;
 }
 
@@ -157,7 +99,7 @@ KDataStream APA::Encode() const
 
 void APA::Encode( KDataStream & stream ) const
 {
-    stream << m_ApaUnion.m_ui16ParamIndex
+    stream << m_ui16ParamIndex
            << m_i16Value;
 }
 
@@ -165,8 +107,8 @@ void APA::Encode( KDataStream & stream ) const
 
 KBOOL APA::operator == ( const APA & Value ) const
 {
-    if( m_ApaUnion.m_ui16ParamIndex != Value.m_ApaUnion.m_ui16ParamIndex ) return false;
-    if( m_i16Value                  != Value.m_i16Value )                  return false;
+    if( m_ui16ParamIndex != Value.m_ui16ParamIndex ) return false;
+    if( m_i16Value       != Value.m_i16Value )       return false;
     return true;
 }
 

@@ -40,6 +40,7 @@ This example shows the older method for sending a PDU, to see how the connection
 #include <iostream>
 #include "KDIS/PDU/Entity_Info_Interaction/Entity_State_PDU.h"
 #include "KDIS/Network/Connection.h" // A cross platform connection class.
+#include "KDIS/DataTypes/LifeFormAppearance.h"
 
 // Lets declare all namespaces to keep the code small.
 using namespace std;
@@ -69,7 +70,10 @@ int main()
 
     WorldCoordinates EntityLocation( GeoX, GeoY, GeoZ );
     EulerAngles EntityOrientation( Psi, Theta , Phi );
-    EntityAppearance EntEA;
+
+    LifeFormAppearance appear;
+    appear.SetEntitySignalMirrorInUse(true);
+    EntityAppearance EntEA(appear);
     DeadReckoningParameter DRP( Static, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
     EntityMarking EntMarking( ASCII, "KARL", 4 );
     EntityCapabilities EntEC( false, false, false, false );

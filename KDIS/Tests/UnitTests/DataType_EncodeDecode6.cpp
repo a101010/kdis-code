@@ -84,6 +84,11 @@
 #include "KDIS/DataTypes/UnderwaterAcousticFundamentalParameterData.h"
 #include "KDIS/DataTypes/VectoringNozzleSystem.h"
 
+// Test Data
+#include "Tests/TestData/APAData.hpp"
+#include "Tests/TestData/ArealObjectAppearanceData.hpp"
+#include "Tests/TestData/LinearObjectAppearanceData.hpp"
+
 using namespace KDIS;
 using namespace DATA_TYPE;
 
@@ -125,20 +130,41 @@ TEST(DataType_EncodeDecode6, AggregateType)
 
 TEST(DataType_EncodeDecode6, APA)
 {
-    APA dtIn;
+    KDataStream instream(
+            (KOCTET*) APAData::buffer,
+            APAData::size
+        );
+    APA dtIn(instream);
     KDataStream stream = dtIn.Encode();
     APA dtOut(stream);
     EXPECT_EQ(dtIn, dtOut);
     EXPECT_EQ(0, stream.GetBufferSize());
+    EXPECT_EQ(KDIS::DATA_TYPE::ENUMS::GrahamsMKVCoffeeMaker, dtOut.GetAPPI());
+    EXPECT_FALSE(dtOut.GetStatusVal1());
+    EXPECT_TRUE(dtOut.GetStatusVal2());
 }
 
 TEST(DataType_EncodeDecode6, ArealObjectAppearance)
 {
-    ArealObjectAppearance dtIn;
+    KDataStream instream(
+        (KOCTET*) ArealObjectAppearanceData::buffer,
+        ArealObjectAppearanceData::size
+    );
+    ArealObjectAppearance dtIn(instream);
     KDataStream stream = dtIn.Encode();
     ArealObjectAppearance dtOut(stream);
+    // ObjectAppearance
     EXPECT_EQ(dtIn, dtOut);
     EXPECT_EQ(0, stream.GetBufferSize());
+    EXPECT_EQ(75, dtOut.GetPercentageComplete());
+    EXPECT_EQ(KDIS::DATA_TYPE::ENUMS::ObjectDamaged, dtOut.GetDamage());
+    EXPECT_TRUE(dtOut.IsPredistributed());
+    EXPECT_TRUE(dtOut.GetState());
+    EXPECT_TRUE(dtOut.IsSmoking());
+    EXPECT_FALSE(dtOut.IsFlaming());
+    // ArealObjectAppearance
+    EXPECT_EQ(KDIS::DATA_TYPE::ENUMS::Cleared2bit, dtOut.GetBreach());
+    EXPECT_EQ(0xFEED, dtOut.GetMineCount());
 }
 
 TEST(DataType_EncodeDecode6, BeamData)
@@ -476,11 +502,29 @@ TEST(DataType_EncodeDecode6, LE_EulerAngles)
 
 TEST(DataType_EncodeDecode6, LinearObjectAppearance)
 {
-    LinearObjectAppearance dtIn;
+    KDataStream instream(
+        (KOCTET*) LinearObjectAppearanceData::buffer,
+        LinearObjectAppearanceData::size
+    );
+    LinearObjectAppearance dtIn(instream);
     KDataStream stream = dtIn.Encode();
     LinearObjectAppearance dtOut(stream);
     EXPECT_EQ(dtIn, dtOut);
     EXPECT_EQ(0, stream.GetBufferSize());
+    // ObjectAppearance
+    EXPECT_EQ(dtIn, dtOut);
+    EXPECT_EQ(0, stream.GetBufferSize());
+    EXPECT_EQ(75, dtOut.GetPercentageComplete());
+    EXPECT_EQ(KDIS::DATA_TYPE::ENUMS::ObjectDamaged, dtOut.GetDamage());
+    EXPECT_TRUE(dtOut.IsPredistributed());
+    EXPECT_TRUE(dtOut.GetState());
+    EXPECT_TRUE(dtOut.IsSmoking());
+    EXPECT_FALSE(dtOut.IsFlaming());
+    // LinearObjectAppearance
+    EXPECT_EQ(50, dtOut.GetOpacity());
+    EXPECT_TRUE(dtOut.IsAttached());
+    EXPECT_EQ(0xFE, dtOut.GetBreachLength());
+    EXPECT_EQ(0XED, dtOut.GetBreachLocation());
 }
 
 TEST(DataType_EncodeDecode6, LinearSegmentParameter)

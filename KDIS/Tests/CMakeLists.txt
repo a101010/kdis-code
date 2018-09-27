@@ -3,6 +3,7 @@ set(PROJECT_NAME_STR KDIS)
 find_package(Threads REQUIRED)
 
 add_subdirectory(gtest)
+add_subdirectory(TestUtilities)
 enable_testing()
 set(PROJECT_TEST_NAME ${PROJECT_NAME_STR}_tests)
 include_directories(${GTEST_INCLUDE_DIRS} ${COMMON_INCLUDES})	

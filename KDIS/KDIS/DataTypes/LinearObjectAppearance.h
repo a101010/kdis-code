@@ -44,36 +44,19 @@ http://p.sf.net/kdis/UserGuide
 namespace KDIS {
 namespace DATA_TYPE {
 
+// TODO Is there a case for breaking this into three
+//      separate objects? We wouldn't have to
+//      access BreachLoc, BreachLength, or Opacity
+//      as bit fields if we did.
+//      And GetAsString could return something more useful.
+//      E.g.:
+//         TankDitch_ConcertinaWireAppearance
+//         ExhaustSmokeAppearance
+//         MinefieldLaneMarkerAppearance
 class KDIS_EXPORT LinearObjectAppearance : public ObjectAppearance
 {
 protected:
-
-    union
-    {
-        struct
-        {
-            KUINT32 m_ui32Breach       : 2;
-            KUINT32 m_ui32Unused       : 14;
-            KUINT32 m_ui32BreachLength : 8;
-            KUINT32 m_ui32BreachLoc    : 8;
-        } m_TankDitchConcertinaWire;
-
-        struct
-        {
-            KUINT32 m_ui32Opacity  : 8;
-            KUINT32 m_ui32Attached : 1;
-            KUINT32 m_ui32Chemical : 2;
-            KUINT32 m_ui32Unused   : 21;
-        } m_ExhaustSmoke;
-
-        struct
-        {
-            KUINT32 m_ui32VisibleSide : 2;
-            KUINT32 m_ui32Unused      : 30;
-        } m_MinefieldLaneMarker;
-
-        KUINT32 m_ui32SpecificAppearance;
-    } m_SpecificAppearanceUnion;
+    KUINT32 m_linear_appearance_bits;
 
 public:
 
@@ -136,9 +119,9 @@ public:
     //              KDIS::DATA_TYPE::LinearObjectAppearance::GetOpacity
     // Description: The percent opacity of the smoke, ranging from 0% opacity to 100%.
     //              Acceptable values are 0 - 100 else throws INVALID_DATA exception.
-    // Parameter:   KUINT8 O
+    // Parameter:   KUINT8 Opacity
     //************************************
-    void SetOpacity( KUINT8 O ) throw( KException );
+    void SetOpacity( KUINT8 Opacity ) throw( KException );
     KUINT8 GetOpacity() const;
 
     //************************************

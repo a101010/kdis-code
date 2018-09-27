@@ -34,11 +34,8 @@ http://p.sf.net/kdis/UserGuide
 
     purpose:    Represents the appearance of a life form.
                 Implemented as struct so as to prevent the size from
-                changing due to RTTI etc. This struct will be part of a
-                union with all specific appearance values so it is implemented
-                slightly different.
-                No constructors to prevent C2620 error caused by union of
-                classes/structs
+                changing due to RTTI etc. No virtual methods, so
+                no VTABLE.
     size:       32 Bits / 4 Octet
 *********************************************************************/
 
@@ -46,6 +43,7 @@ http://p.sf.net/kdis/UserGuide
 
 #include "./../KDefines.h"
 #include "./Enums/KDISEnums.h"
+#include "./external/bits/bits.hpp"
 
 namespace KDIS {
 namespace DATA_TYPE {
@@ -53,29 +51,11 @@ namespace DATA_TYPE {
 struct KDIS_EXPORT LifeFormAppearance
 {
 protected:
-                                         // Bits 
-    KUINT32 m_PaintScheme           : 1; // 0
-    KUINT32 m_Unused1               : 2; // 1-2
-    KUINT32 m_Damage                : 2; // 3-4
-    KUINT32 m_Compliance            : 4; // 5-8
-    KUINT32 m_Unused2               : 2; // 9-10
-    KUINT32 m_SignalSmokeInUse      : 1; // 11
-    KUINT32 m_Flashlight            : 1; // 12
-    KUINT32 m_SignalMirrorInUse     : 1; // 13
-    KUINT32 m_IRStrobe              : 1; // 14
-    KUINT32 m_IRIlluminator         : 1; // 15
-    KUINT32 m_LifeformState         : 4; // 16-19
-    KUINT32 m_Unused3               : 1; // 20
-    KUINT32 m_FrozenStatus          : 1; // 21
-    KUINT32 m_MountedHoisted        : 1; // 22
-    KUINT32 m_State                 : 1; // 23
-    KUINT32 m_Weapon1               : 2; // 24-25
-    KUINT32 m_Weapon2               : 2; // 26-27
-    KUINT32 m_Camouflage            : 2; // 28-29
-    KUINT32 m_ConcealedStationary   : 1; // 30
-    KUINT32 m_ConcealedMovement     : 1; // 31
+    KUINT32 m_bits;
     
 public:
+
+    LifeFormAppearance();
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityPaintScheme
@@ -83,8 +63,13 @@ public:
     // Description: Describes the paint scheme of an entity.
     // Parameter:   EntityPaintScheme EPS
     //************************************
-    void SetEntityPaintScheme( KDIS::DATA_TYPE::ENUMS::EntityPaintScheme EPS );
-    KDIS::DATA_TYPE::ENUMS::EntityPaintScheme GetEntityPaintScheme() const;
+    void SetEntityPaintScheme(KDIS::DATA_TYPE::ENUMS::EntityPaintScheme EPS) {
+        bits::setBit<0>(m_bits, EPS);
+    }
+    KDIS::DATA_TYPE::ENUMS::EntityPaintScheme GetEntityPaintScheme() const {
+        return static_cast<KDIS::DATA_TYPE::ENUMS::EntityPaintScheme>(
+            bits::getBit<0>(m_bits));
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityDamage
@@ -92,8 +77,13 @@ public:
     // Description: Entity Damage/Health State.
     // Parameter:   EntityDamage ED
     //************************************
-    void SetEntityDamage( KDIS::DATA_TYPE::ENUMS::EntityDamage ED );
-    KDIS::DATA_TYPE::ENUMS::EntityDamage GetEntityDamage() const;
+    void SetEntityDamage(KDIS::DATA_TYPE::ENUMS::EntityDamage ED) {
+        bits::setBits<2, 3>(m_bits, ED);
+    }
+    KDIS::DATA_TYPE::ENUMS::EntityDamage GetEntityDamage() const {
+        return static_cast<KDIS::DATA_TYPE::ENUMS::EntityDamage>(
+                bits::getUbits<2, 3>(m_bits));
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityEntityCompliance
@@ -101,8 +91,13 @@ public:
     // Description: Describes compliance of life form.
     // Parameter:   EntityCompliance EC
     //************************************
-    void SetEntityEntityCompliance( KDIS::DATA_TYPE::ENUMS::EntityCompliance EC );
-    KDIS::DATA_TYPE::ENUMS::EntityCompliance GetEntityEntityCompliance() const;
+    void SetEntityEntityCompliance(KDIS::DATA_TYPE::ENUMS::EntityCompliance EC) {
+        bits::setBits<4, 5>(m_bits, EC);
+    }
+    KDIS::DATA_TYPE::ENUMS::EntityCompliance GetEntityEntityCompliance() const {
+        return static_cast< KDIS::DATA_TYPE::ENUMS::EntityCompliance>(
+                bits::getUbits<4, 5>(m_bits));
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntitySignalSmokeInUse
@@ -110,8 +105,12 @@ public:
     // Description: Describes whether signal smoke is being used or not. True - In Use. False - Not In Use.
     // Parameter:   KBOOL FL
     //************************************
-    void SetEntitySignalSmokeInUse( KBOOL SS );
-    KBOOL IsEntitySignalSmokeInUse() const;
+    void SetEntitySignalSmokeInUse(KBOOL SS) {
+        bits::setBit<11>(m_bits, SS);
+    }
+    KBOOL IsEntitySignalSmokeInUse() const {
+        return bits::getBit<11>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityFlashLights
@@ -119,8 +118,12 @@ public:
     // Description: Describes whether Flash Lights are on or off. True - On. False - Off.
     // Parameter:   KBOOL FL
     //************************************
-    void SetEntityFlashLights( KBOOL FL );
-    KBOOL IsEntityFlashLightsOn() const;
+    void SetEntityFlashLights(KBOOL FL) {
+        bits::setBit<12>(m_bits, FL);
+    }
+    KBOOL IsEntityFlashLightsOn() const {
+        return bits::getBit<12>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntitySignalMirrorInUse
@@ -128,8 +131,12 @@ public:
     // Description: Describes whether a signal mirror is being used or not. True - In Use. False - Not In Use.
     // Parameter:   KBOOL FL
     //************************************
-    void SetEntitySignalMirrorInUse(KBOOL SM );
-    KBOOL IsEntitySignalMirrorInUse() const;
+    void SetEntitySignalMirrorInUse(KBOOL SM) {
+        bits::setBit<13>(m_bits,SM);
+    }
+    KBOOL IsEntitySignalMirrorInUse() const {
+        return bits::getBit<13>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityIRStrobe
@@ -137,8 +144,12 @@ public:
     // Description: Describes whether an IR strobe is on or off. True - On. False - Off.
     // Parameter:   KBOOL FL
     //************************************
-    void SetEntityIRStrobe( KBOOL IRS );
-    KBOOL IsEntityIRStrobeOn() const;
+    void SetEntityIRStrobe(KBOOL IRS) {
+        bits::setBit<14>(m_bits, IRS);
+    }
+    KBOOL IsEntityIRStrobeOn() const {
+        return bits::getBit<14>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityIRIlluminator
@@ -146,8 +157,12 @@ public:
     // Description: Describes whether an IR strobe is on or off. True - On. False - Off.
     // Parameter:   KBOOL FL
     //************************************
-    void SetEntityIRIlluminator( KBOOL IRI );
-    KBOOL IsEntityIRIlluminatorOn() const;
+    void SetEntityIRIlluminator(KBOOL IRI) {
+        bits::setBit<15>(m_bits, IRI);
+    }
+    KBOOL IsEntityIRIlluminatorOn() const {
+        return bits::getBit<15>(m_bits);
+    }
 
    //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityLifeformState
@@ -155,8 +170,13 @@ public:
     // Description: Entities state/appearance. I.E Posture.
     // Parameter:   EntityLifeformAppearance EA
     //************************************
-    void SetEntityLifeformState( KDIS::DATA_TYPE::ENUMS::EntityLifeformAppearance EA );
-    KDIS::DATA_TYPE::ENUMS::EntityLifeformAppearance GetEntityLifeformState() const;
+    void SetEntityLifeformState(KDIS::DATA_TYPE::ENUMS::EntityLifeformAppearance EA) {
+        bits::setBits<4, 16>(m_bits, EA);
+    }
+    KDIS::DATA_TYPE::ENUMS::EntityLifeformAppearance GetEntityLifeformState() const {
+        return static_cast<KDIS::DATA_TYPE::ENUMS::EntityLifeformAppearance>(
+                bits::getUbits<4, 16>(m_bits));
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityFrozenStatus
@@ -165,8 +185,12 @@ public:
     //              Note: Frozen entities should not be dead-reckoned.
     // Parameter:   KBOOL EFS
     //************************************
-    void SetEntityFrozenStatus( KBOOL EFS );
-    KBOOL IsEntityFrozen() const;
+    void SetEntityFrozenStatus(KBOOL EFS) {
+        bits::setBit<21>(m_bits, EFS);
+    }
+    KBOOL IsEntityFrozen() const {
+        return bits::getBit<21>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityMountedHoisted
@@ -174,8 +198,12 @@ public:
     // Description: Describes whether the lifeform is mounted/hoisted on another platform. True - Yes. False - No.
     // Parameter:   KBOOL FL
     //************************************
-    void SetEntityMountedHoisted(KBOOL MH );
-    KBOOL IsEntityMountedHoisted() const;
+    void SetEntityMountedHoisted(KBOOL MH) {
+        bits::setBit<22>(m_bits, MH);
+    }
+    KBOOL IsEntityMountedHoisted() const {
+        return bits::getBit<22>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityStateActive
@@ -183,8 +211,12 @@ public:
     // Description: Active(true) / De active(false)
     // Parameter:   KBOOL ES
     //************************************
-    void SetEntityStateActive( KBOOL ES );
-    KBOOL IsEntityStateActive() const;
+    void SetEntityStateActive(KBOOL ES) {
+        bits::setBit<23>(m_bits, !ES);
+    }
+    KBOOL IsEntityStateActive() const {
+        return !bits::getBit<23>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityLifeformWeapon
@@ -192,10 +224,21 @@ public:
     // Description: Weapon Status. E.G Stowed.
     // Parameter:   EntityLifeformWeapon ELW
     //************************************
-    void SetEntityLifeformWeapon1( KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon ELW );
-    KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon GetEntityLifeformWeapon1() const;
-    void SetEntityLifeformWeapon2( KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon ELW );
-    KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon GetEntityLifeformWeapon2() const;
+    void SetEntityLifeformWeapon1(KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon ELW) {
+        bits::setBits<2, 24>(m_bits, ELW);
+    }
+    KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon GetEntityLifeformWeapon1() const {
+        return static_cast<KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon>(
+                bits::getUbits<2, 24>(m_bits));
+    }
+
+    void SetEntityLifeformWeapon2(KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon ELW) {
+        bits::setBits<2, 26>(m_bits, ELW);
+    }
+    KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon GetEntityLifeformWeapon2() const {
+        return static_cast<KDIS::DATA_TYPE::ENUMS::EntityLifeformWeapon>(
+                bits::getUbits<2, 26>(m_bits));
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetEntityCamouflage
@@ -203,8 +246,13 @@ public:
     // Description: camouflage type worn.
     // Parameter:   EntityCamouflage EC
     //************************************
-    void SetEntityCamouflage( KDIS::DATA_TYPE::ENUMS::EntityCamouflage EC );
-    KDIS::DATA_TYPE::ENUMS::EntityCamouflage GetEntityCamouflage() const;
+    void SetEntityCamouflage(KDIS::DATA_TYPE::ENUMS::EntityCamouflage EC) {
+        bits::setBits<2, 28>(m_bits, EC);
+    }
+    KDIS::DATA_TYPE::ENUMS::EntityCamouflage GetEntityCamouflage() const {
+        return static_cast<KDIS::DATA_TYPE::ENUMS::EntityCamouflage>(
+                bits::getUbits<2, 28>(m_bits));
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetConcealedStationary
@@ -213,8 +261,12 @@ public:
     //              False - Not concealed. True - Entity in a prepared concealed position.
     // Parameter:   KBOOL CS
     //************************************
-    void SetConcealedStationary( KBOOL CS );
-    KBOOL IsConcealedStationary() const;
+    void SetConcealedStationary(KBOOL CS) {
+        bits::setBit<30>(m_bits, CS);
+    }
+    KBOOL IsConcealedStationary() const {
+        return bits::getBit<30>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::SetConcealedStationary
@@ -223,14 +275,20 @@ public:
     //              False - Open movement. True - Rushes between covered positions.
     // Parameter:   KBOOL CM
     //************************************
-    void SetConcealedMovement( KBOOL CM );
-    KBOOL IsConcealedMovement() const;
+    void SetConcealedMovement(KBOOL CM) {
+        bits::setBit<31>(m_bits, CM);
+    }
+    KBOOL IsConcealedMovement() const {
+        return bits::getBit<31>(m_bits);
+    }
 
     //************************************
     // FullName:    KDIS::DATA_TYPE::LifeFormAppearance::GetAsString
     // Description: Returns a string representation
     //************************************
     KString GetAsString() const;
+
+    void SetData(KUINT32& data) { m_bits = data; }
 
     KBOOL operator == ( const LifeFormAppearance & Value ) const;
     KBOOL operator != ( const LifeFormAppearance & Value ) const;

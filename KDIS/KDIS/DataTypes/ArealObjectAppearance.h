@@ -47,17 +47,8 @@ class KDIS_EXPORT ArealObjectAppearance : public ObjectAppearance
 {
 protected:
 
-    union
-    {
-        struct
-        {
-            KUINT32 m_ui32Breach : 2;
-			KUINT32 m_ui32Unused : 14;
-            KUINT32 m_ui32Mines  : 16;
-        } m_Minefield;
-
-        KUINT32 m_ui32SpecificAppearance;
-    } m_SpecificAppearanceUnion;
+    KUINT16 m_bits;
+    KUINT16 m_mines;
 
 public:
 

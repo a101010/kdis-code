@@ -39,6 +39,7 @@ http://p.sf.net/kdis/UserGuide
 #pragma once
 
 #include "./DataTypeBase.h"
+#include "./external/bits/bits.hpp"
 
 namespace KDIS {
 namespace DATA_TYPE {
@@ -47,22 +48,8 @@ class KDIS_EXPORT ObjectAppearance : public DataTypeBase
 {
 protected:
 
-    union
-    {
-        struct
-        {
-            KUINT16 m_ui16PcComp         : 8;
-            KUINT16 m_ui16Dmg            : 2;
-            KUINT16 m_ui16Predistributed : 1;
-            KUINT16 m_ui16State          : 1;
-            KUINT16 m_ui16Smoking        : 1;
-            KUINT16 m_ui16Flaming        : 1;
-            KUINT16 m_ui16Unused         : 2;
-        };
-
-        KUINT16 m_ui16GeneralAppearance;
-        KUINT8 m_ui8GeneralAppearance[2]; // Used for encode/decode
-    } m_GeneralAppearanceUnion;
+    KUINT8 m_percentComplete;
+    KUINT8 m_bits;
 
 public:
 
